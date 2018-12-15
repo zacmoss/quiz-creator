@@ -209,42 +209,11 @@ app.post('/logout', (req, res) => {
 
 
 
-//let questionsArray = [];
-let quizObject = {
-    "teacher": "",
-    "school": "",
-    "numberOfQuestions": 0,
-    "questionsArray": []
-}
-app.post('/createQuiz', (req, res) => {
-    // need to push this quiz id into user's quizzes array
-    
-    let teacher = req.body.teacher;
-    let school = req.body.school;
-    let numberOfQuestions = req.body.numberOfQuestions;
-    let array = []; /// for questionsArray below // push all questionsObjects into this
 
-    quizObject.teacher = teacher;
-    quizObject.school = school;
-    quizObject.numberOfQuestions = numberOfQuestions;
-    quizObject.questionsArray = array;
-    console.log(quizObject);
-    
-    res.json({error: 0, message: "connected"});
-})
 
-app.post('/initQuestion', (req, res) => {
-    // initializes question into quizObject
-    let questionObject = {
-        "number": null,
-        "question": "",
-        "answers": [],
-        "correctAnswer": 0
-    }
-    quizObject.questionsArray.push(questionObject);
-    console.log(quizObject);
-    res.json({error: 0, message: "Question pushed"});
-})
+
+
+
 
 app.post('/editQuestion', (req, res) => {
 
@@ -265,6 +234,43 @@ app.post('/editQuestion', (req, res) => {
     quizObject.questionsArray.push(questionObject);
 
     res.json({error: 0, message: "Question edited"});
+})
+
+
+
+
+
+
+
+
+
+
+app.post('/createQuiz', (req, res) => {    
+    let quizObject = req.body;
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.insertOne({quizObject}, function(err, docInserted) {
+            console.log(docInserted.insertedId);
+            let quizId = docInserted.insertedId;
+            res.json({error: 0, message: "quiz created", quizId: quizId })
+        });
+    });
+})
+
+app.post('/pushQuestion', (req, res) => {
+    let questionObject = req.body;
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.findOneAndUpdate({_id: ObjectId(questionObject.quizId)}, { $push: { questionsArray: questionObject } }, function(err, result) {
+            if (result) {
+                res.send({ error: 0, message: "Question Added"});
+            } else {
+                res.send({ error: 1, message: "Quiz Doesn't Exist" })            }
+        });
+    });
+
 })
 
 app.post('/submitQuiz', (req, res) => {

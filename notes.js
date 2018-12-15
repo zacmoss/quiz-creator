@@ -1,0 +1,10 @@
+/*
+
+Need to handle if they type same teacher at same school types in same name of
+an existing quiz we need to send error telling her that that quiz already exists.
+
+
+
+
+
+*/

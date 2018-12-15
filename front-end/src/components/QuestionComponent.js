@@ -2,6 +2,102 @@ import React from 'react';
 import axios from 'axios';
 import '../style.css';
 
+
+
+
+class QuestionComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            number: this.props.number,
+            submit: this.props.submit,
+            quizId: this.props.quizId,
+            question: "",
+            type: "multiple",
+            answers: [],
+            correctAnswer: ""
+        }
+    
+        this.typeHandler = this.typeHandler.bind(this);
+        this.answerHandler = this.answerHandler.bind(this);
+    }
+
+    /*
+    componentWillMount() {
+        //this.setState(() => ({ number: this.props.number }));
+        alert(this.state.submit);
+    }
+
+    componentWillReceiveProps() {
+        alert("submit at child component");
+    }
+
+    // will this be called on state changes???
+    componentDidMount() {
+        let data = {
+            "number": this.state.number,
+            "question": this.state.question,
+            "type": this.state.type,
+            "answers": this.state.answers,
+            "correctAnswer": this.state.correctAnswer
+        }
+        /*
+        axios.post('/editQuestion', data).then(function(response) {
+            if (response.data.error === 0) {
+                alert(response.data.message);
+            } else {
+                alert(response.data.message);
+            }
+        }).catch(function(err) {
+            console.log("error: " + err);
+        });
+        *//*
+        
+    }
+    */
+
+    
+    typeHandler(e) {
+        e.persist();
+        this.setState(() => ({ type: e.target.value }));
+    }
+    answerHandler(e) {
+        e.persist();
+        this.setState(() => ({ correctAnswer: e.target.value }));
+    }
+    
+
+    render() {
+        return (
+            <div key={this.state.number} className="question_container">
+                <div><label>Question {this.state.number}</label></div>
+                <input name="question" placeholder="question" autoComplete="off"></input>
+                <div>
+                    <div><label>{this.state.submit}</label></div>
+                    <div><label>a</label><input name="answerA"></input></div>
+                    <div><label>b</label><input name="answerB"></input></div>
+                    <div><label>c</label><input name="answerC"></input></div>
+                    <div><label>d</label><input name="answerD"></input></div>
+                    <div>
+                        <div><label>Correct Answer</label></div>
+                        <select name="correctAnswer" onChange={this.answerHandler} value={this.state.correctAnswer}>
+                            <option value="a">a</option>
+                            <option value="b">b</option>
+                            <option value="c">c</option>
+                            <option value="d">d</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+}
+
+
+
+
+/* old component
 class QuestionComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -84,5 +180,6 @@ class QuestionComponent extends React.Component {
     }
 
 }
+*/
 
 export default QuestionComponent;
