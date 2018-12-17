@@ -1,14 +1,23 @@
 import React from 'react';
 import '../style.css';
-//import axios from 'axios';
+import axios from 'axios';
 import Header from './Header';
 import { Link } from 'react-router-dom';
+import Axios from 'axios';
 
 
 // Should contain 'Create New Quiz' 'My Quizzes List'
 
 
 class TeacherDashboard extends React.Component {
+
+    componentDidMount() {
+        axios.get('/getUserType').then(function(result) {
+            alert(result.data.type);
+        }).catch(function(err) {
+            console.log(err);
+        })
+    }
 
     render() {
         return (

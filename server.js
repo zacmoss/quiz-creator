@@ -101,6 +101,40 @@ MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, 
 
 // HTTP Requests
 
+
+let sessionObject = {
+    "user": null,
+    "mode": null
+}
+
+// below did not work for some reason, something to do with req.session...../////////
+// req.session.type = teacher or student
+// req.session.mode = init or edit
+
+app.post('/clearUserVariable', (req, res) => {
+    sessionObject.user = null;
+    console.log('set to null');
+});
+app.post('/studentUser', (req, res) => {
+    sessionObject.user = "student";
+    
+});
+app.post('/teacherUser', (req, res) => {
+    sessionObject.user = "teacher";
+    console.log(sessionObject.user);
+});
+app.get('/getUserType', (req, res) => {
+    let type = sessionObject.user;
+    res.send({ type: type, user: req.session.user });
+})
+
+
+
+
+
+
+
+
 app.get('/getSignedInVar', (req, res) => {
     if (req.session.user) {
         res.send({message: "User is signed in", error: 0, signedIn: true})

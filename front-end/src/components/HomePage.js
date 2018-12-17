@@ -3,6 +3,7 @@ import '../style.css';
 //import axios from 'axios';
 import Header from './Header';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 
 class HomePage extends React.Component {
@@ -19,7 +20,7 @@ class HomePage extends React.Component {
     }
 
     
-    componentDidMount() {
+    componentWillMount() {
         /*
         console.log('rendered');
         axios.get('/testGet').then(function(result) {
@@ -28,8 +29,30 @@ class HomePage extends React.Component {
             console.log("error: " + err);
         })
         */
+        axios.post('/clearUserVariable').then(function(result) {
+
+        }).catch(function(err) {
+            console.log(err);
+        });
     }
-    
+
+    // on page render clear teacher-student variable at server
+
+    // on decision set teacher-student variable at server
+    studentClick() {
+        axios.post('/studentUser').then(function(result) {
+
+        }).catch(function(err) {
+            console.log(err);
+        });
+    }
+    teacherClick() {
+        axios.post('/teacherUser').then(function(result) {
+
+        }).catch(function(err) {
+            console.log(err);
+        });
+    }
 
     render() {
         return (
@@ -37,10 +60,10 @@ class HomePage extends React.Component {
                 <Header />
                 <div className="home_page_container">
                     <div className="row boxes_container">
-                        <Link className="box" to="/studentDashboard" >
+                        <Link onClick={this.studentClick} className="box" to="/studentDashboard" >
                             <span>Students</span>
                         </Link>
-                        <Link className="box" to="/login" >
+                        <Link onClick={this.teacherClick} className="box" to="/login" >
                             <span>Teachers</span>
                         </Link>
                     </div>
@@ -48,26 +71,6 @@ class HomePage extends React.Component {
             </div>
         )
     }
-
-    /* old render
-    render() {
-        return (
-            <div>
-                <Header />
-                <div className="home_page_container">
-                    <div className="row boxes_container">
-                        <div className="box">
-                            <span>Create a Quiz</span>
-                        </div>
-                        <div className="box">
-                            <span>Take a Quiz</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-    */
 }
 
 export default HomePage;
