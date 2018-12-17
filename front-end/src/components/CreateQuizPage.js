@@ -104,7 +104,6 @@ class CreateQuizPage extends React.Component {
             page: 0,
             lastPage: false
         }
-        //this.selectNumber = this.selectNumber.bind(this);
         this.nextClick = this.nextClick.bind(this);
         this.backClick = this.backClick.bind(this);
         this.clearInputs = this.clearInputs.bind(this);
@@ -113,19 +112,20 @@ class CreateQuizPage extends React.Component {
  
     }
 
-    /*
-    selectNumber(e) {
-        e.persist();
-        this.setState(() => ({ totalQuestions: e.target.value }));
-    }
-    */
-
     nextClick(e) {
         e.preventDefault();
+        
+        let oneQuestion = false;
+        if (this.state.page == 0) {
+            if (e.target.elements.numberOfQuestions.value === "1") {
+                oneQuestion = true;
+            }
+        }
 
         if (this.state.lastPage) {
             this.sendQuestion(e);
-            alert('form submitted');
+            //alert('form submitted');
+            this.props.history.push('/dashboard');
         } else {
             let school;
             let teacher;
@@ -144,7 +144,7 @@ class CreateQuizPage extends React.Component {
             }
             let page = this.state.page + 1;
             let lastPage = false;
-            if (page == this.state.totalQuestions) { //////////// had to do '==' here instead of '===' not sure why
+            if (page == this.state.totalQuestions || oneQuestion) { //////////// had to do '==' here instead of '===' not sure why
                 lastPage = true;
             }
             if (this.state.page === 0) {
@@ -176,10 +176,10 @@ class CreateQuizPage extends React.Component {
         }
         axios.post('/createQuiz', data).then(function(response) {
             if (response.data.error === 0) {
-                alert(response.data.message);
+                //alert(response.data.message);
                 self.setState({ quizId: response.data.quizId });
             } else {
-                alert(response.data.message);
+                //alert(response.data.message);
             }
         }).catch(function(err) {
             console.log("error: " + err);
@@ -188,35 +188,25 @@ class CreateQuizPage extends React.Component {
 
     sendQuestion(e) {
         if (this.state.page > 0) {
-            //let school = this.state.school;
-            //let teacher = this.state.teacher;
-            /*
-            let questionText = e.target.elements.question.value;
-            let answerA = e.target.elements.answerA.value;
-            let answerB = e.target.elements.answerB.value;
-            let answerC = e.target.elements.answerC.value;
-            let answerD = e.target.elements.answerD.value;
-            */
+            
             let answersObject = {
                 "answerA": e.target.elements.answerA.value,
                 "answerB": e.target.elements.answerB.value,
                 'answerC': e.target.elements.answerC.value,
                 "answerD": e.target.elements.answerD.value
             }
-            //let correctAnswer = e.target.correctAnswer.value;
             let questionObject = {
                 "quizId": this.state.quizId,
                 "question": e.target.elements.question.value,
                 "answers": answersObject,
                 "correctAnswer": e.target.correctAnswer.value
             }
-            //console.log(questionObject);
             
             axios.post('/pushQuestion', questionObject).then(function(response) {
                 if (response.data.error === 0) {
-                    alert(response.data.message);
+                    //alert(response.data.message);
                 } else {
-                    alert(response.data.message);
+                    //alert(response.data.message);
                 }
             }).catch(function(err) {
                 console.log("error: " + err);

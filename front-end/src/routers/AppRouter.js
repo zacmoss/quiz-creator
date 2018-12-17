@@ -6,6 +6,7 @@ import LoginPage from '../components/LoginPage';
 import NotFoundPage from '../components/NotFoundPage';
 import Footer from '../components/Footer';
 import SignUpPage from '../components/SignUpPage';
+import Dashboard from '../components/Dashboard';
 import StudentDashboard from '../components/StudentDashboard';
 import TeacherDashboard from '../components/TeacherDashboard';
 import CreateQuizPage from '../components/CreateQuizPage';
@@ -37,6 +38,7 @@ class AppRouter extends React.Component { // Client-Side Routing
                         <Route path="/" component={HomePage} exact={true} />
                         <Route path="/login" component={LoginPage} />
                         <Route path="/signUp" component={SignUpPage} />
+                        <Route path="/dashboard" component={Dashboard} />
                         <Route path="/studentDashboard" component={StudentDashboard} />
                         <Route path="/teacherDashboard" component={TeacherDashboard} />
                         <Route path="/createQuizPage" component={CreateQuizPage} />

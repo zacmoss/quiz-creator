@@ -3,7 +3,6 @@ import '../style.css';
 import axios from 'axios';
 import Header from './Header';
 import { Link } from 'react-router-dom';
-import Axios from 'axios';
 
 
 // Should contain 'Create New Quiz' 'My Quizzes List'

@@ -11,6 +11,28 @@ made 'edit mode' when they click on a submitted quiz from the dashboard and made
 when we return to dashboard....on load of dashboard...
 
 
+
+
+Need to make a decision about the UI...If studentClick then no dashboard and just 
+choose quiz / take quiz / show results / re-route back to beginning or if 
+studentClick they have a dashboard showing their results and quizzes to take...? To
+do the later we have access to userObject in server which we can get user type 
+like "student" or "teacher" and conditionally render their dashboard depending on
+it.
+
+For now, lets just do the former. StudentClick / choose quiz / take quiz / show
+results / re-route to beginning / no login. TeacherClick / Login / dashboard /
+create quiz / dashboard / edit quiz / dashboard / view quiz results with user
+names and scores
+
+
+
+
+
+
+When a quiz is created need to add quizId to user data so it can be shown on
+their dashboard and edited.
+
 Need to build the Question Component where it capable of editing an initialized
 question like when they first create a quiz as well as an editable question
 when they go edit a quiz. So, in the component we need to be able to plug in data
@@ -47,6 +69,15 @@ StudentDashboard (TakeQuiz) (QuizResults)
 TakeQuizPage
 QuestionComponent
 ResultsPage
+
+
+
+
+
+Discussion
+
+Dashboard is conditionally rendered depending on if user logged in as Teacher or
+Student.
 
 
 

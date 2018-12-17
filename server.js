@@ -123,10 +123,33 @@ app.post('/teacherUser', (req, res) => {
     sessionObject.user = "teacher";
     console.log(sessionObject.user);
 });
-app.get('/getUserType', (req, res) => {
+app.get('/getUserData', (req, res) => {
     let type = sessionObject.user;
-    res.send({ type: type, user: req.session.user });
+    let userId = req.session.userId;
+    if (type === "teacher") {
+        MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+            let dbo = db.db("quiz-creator");
+            let collection = dbo.collection('users');
+            collection.findOne({_id: ObjectId(userId)}, function(err, result) {
+                if (result) {
+                    //res.send({ error: 0, message: "Question Added"});
+                    console.log(result.quizzes);
+                    let array = result.quizzes;
+                    res.send({ type: type, userId: req.session.userId, user: req.session.user, array: array });
+                } else {
+                    res.send({ error: 1, message: "Couldn't find user" })            }
+            });
+        });
+        
+    }
+    //res.send({ type: type, userId: req.session.userId, user: req.session.user });
 })
+/*
+app.get('/getUserQuizzes', (req, res) => {
+    let userId = req.session.userId;
+
+})
+*/
 
 
 
@@ -284,9 +307,16 @@ app.post('/createQuiz', (req, res) => {
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
         let dbo = db.db("quiz-creator");
         let collection = dbo.collection('quizzes');
+        let users = dbo.collection('users');
+        let user = req.session.userId;
         collection.insertOne({quizObject}, function(err, docInserted) {
             console.log(docInserted.insertedId);
+            let userQuizObject = {
+                "quizId": docInserted.insertedId,
+                "title": quizObject.title
+            }
             let quizId = docInserted.insertedId;
+            users.findOneAndUpdate({_id: ObjectId(user)}, { $push: { quizzes: userQuizObject } });
             res.json({error: 0, message: "quiz created", quizId: quizId })
         });
     });
