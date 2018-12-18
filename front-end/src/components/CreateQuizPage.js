@@ -265,13 +265,13 @@ class CreateQuizPage extends React.Component {
                                         <div>
                                             <div className="question_container">
                                                 <div><label>Question {this.state.page}</label></div>
-                                                <input name="question" placeholder="question" autoComplete="off"></input>
+                                                <input name="question" placeholder="question" autoComplete="off" required></input>
                                                 <div>
                                                     <div><label>Answers</label></div>
-                                                    <div><label>a</label><input name="answerA"></input></div>
-                                                    <div><label>b</label><input name="answerB"></input></div>
-                                                    <div><label>c</label><input name="answerC"></input></div>
-                                                    <div><label>d</label><input name="answerD"></input></div>
+                                                    <div><label>a</label><input name="answerA" required></input></div>
+                                                    <div><label>b</label><input name="answerB" required></input></div>
+                                                    <div><label>c</label><input name="answerC" required></input></div>
+                                                    <div><label>d</label><input name="answerD" required></input></div>
                                                     <div>
                                                         <div><label>Correct Answer</label></div>
                                                         <select name="correctAnswer">

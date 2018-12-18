@@ -79,6 +79,21 @@ Discussion
 Dashboard is conditionally rendered depending on if user logged in as Teacher or
 Student.
 
+Lesson Learned: Don't store quizIds on userObject in database, b/c when you delete
+the quiz in the quizzes collection, that id is still in userObject. So, what we
+can do is on login or dashboard render when we grab user data we can check 
+for userId in createdBy in all quizzes....is this secure???
+
+Lesson Re-Learned: When going a child or two children deep regarding components, 
+you can return to the HOC view by passing that onSubmit prop with the onSubmit
+function in the HOC changing the state how you need...Example is regarding editing
+a quiz. The HOC is the Dashboard, the view is rendered to ViewQuiz component, which
+holds an onSubmit function that changes the state "mode" to "view" which conditionally
+renders the full quiz. When the state "mode" is changed to edit, it is passed 
+variables and conditionally renders a QuestionComponent. It's passed the onSubmit
+function from ViewQuiz so that when we click "Save" we hit the server with question
+changes and then changes state "mode" in the HOC to alter view back to ViewQuiz.
+
 
 
 

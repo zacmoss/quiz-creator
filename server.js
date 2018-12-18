@@ -129,7 +129,19 @@ app.get('/getUserData', (req, res) => {
     if (type === "teacher") {
         MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
             let dbo = db.db("quiz-creator");
-            let collection = dbo.collection('users');
+            let collection = dbo.collection('quizzes');
+            collection.find({ "createdBy": userId }).toArray(function(err, docs) {
+                let quizzesCreated = docs;
+                res.send({ type: type, userId: req.session.userId, user: req.session.user, array: quizzesCreated });////////////////// Incredibly redundant...
+            });
+            /*
+            collection.find({ "createdBy": { $gt: userId } }, function(result) {
+                console.log('here');
+                console.log(result);
+                let quizzesCreated = result;
+                res.send({ type: type, userId: req.session.userId, user: req.session.user, array: quizzesCreated });////////////////// Incredibly redundant...
+            });
+            /*
             collection.findOne({_id: ObjectId(userId)}, function(err, result) {
                 if (result) {
                     //res.send({ error: 0, message: "Question Added"});
@@ -139,6 +151,7 @@ app.get('/getUserData', (req, res) => {
                 } else {
                     res.send({ error: 1, message: "Couldn't find user" })            }
             });
+            */
         });
         
     }
@@ -152,8 +165,15 @@ app.post('/getQuizData', (req, res) => {
         let collection = dbo.collection('quizzes');
         collection.findOne({_id: ObjectId(quizId)}, function(err, result) {
             if (result) {
-                console.log(result.quizObject.title);
-                res.send({ error: 0, message: "quiz found", quizObject: result.quizObject });
+                console.log(result.title);
+                let quizObject = {
+                    "title": result.title,
+                    "school": result.school,
+                    "teacher": result.teacher,
+                    "numberOfQuestions": result.numberOfQuestions,
+                    "questionsArray": result.questionsArray
+                }
+                res.send({ error: 0, message: "quiz found", quizObject: quizObject });
                 //let array = result.quizzes;
                 //res.send({ type: type, userId: req.session.userId, user: req.session.user, array: array });
             } else {
@@ -317,27 +337,44 @@ app.post('/editQuestion', (req, res) => {
 
 
 app.post('/createQuiz', (req, res) => {    
-    let quizObject = req.body;
+    //let quizObject = req.body;
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
         let dbo = db.db("quiz-creator");
         let collection = dbo.collection('quizzes');
-        let users = dbo.collection('users');
-        let user = req.session.userId;
-        collection.insertOne({quizObject}, function(err, docInserted) {
-            console.log(docInserted.insertedId);
+        //let users = dbo.collection('users');
+        //let user = req.session.userId;
+        collection.insertOne({
+            "createdBy": req.session.userId,
+            "school": req.body.school,
+            "teacher": req.body.teacher,
+            "title": req.body.title,
+            "numberOfQuestions": req.body.numberOfQuestions,
+            "questionsArray": req.body.questionsArray
+            }, function(err, doc) {
+            //console.log(doc.insertedId);
+            /*
             let userQuizObject = {
-                "quizId": docInserted.insertedId,
-                "title": quizObject.title
+                "quizId": doc.insertedId,
+                "title": req.body.title
             }
-            let quizId = docInserted.insertedId;
-            users.findOneAndUpdate({_id: ObjectId(user)}, { $push: { quizzes: userQuizObject } });
+            */
+            let quizId = doc.insertedId;
+            //users.findOneAndUpdate({_id: ObjectId(user)}, { $push: { quizzes: userQuizObject } });
             res.json({error: 0, message: "quiz created", quizId: quizId })
         });
     });
 })
 
 app.post('/pushQuestion', (req, res) => {
-    let questionObject = req.body;
+    //let questionObject = req.body;
+    //console.log(req.body);
+    let questionObject = {
+        "_id": new ObjectId(),
+        "quizId": req.body.quizId,
+        "question": req.body.question,
+        "answers": req.body.answers,
+        "correctAnswer": req.body.correctAnswer
+    }
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
         let dbo = db.db("quiz-creator");
         let collection = dbo.collection('quizzes');

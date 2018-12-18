@@ -38,7 +38,7 @@ class SignUpPage extends React.Component {
                     alert(response.data.message);
                 } else {
                     alert(response.data.message);
-                    self.props.history.push('/');
+                    self.props.history.push('/dashboard');
                 }
             }).catch(function(err) {
                 console.log("error: " + err);

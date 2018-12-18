@@ -9,25 +9,41 @@ class QuestionComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            quizId: this.props.object.quizId,
             number: this.props.number,
-            submit: this.props.submit,
-            quizId: this.props.quizId,
+            _id: this.props.object._id,
             question: "",
             type: "multiple",
-            answers: [],
+            answerA: "",
+            answerB: "",
+            answerC: "",
+            answerD: "",
             correctAnswer: ""
         }
     
         this.typeHandler = this.typeHandler.bind(this);
-        this.answerHandler = this.answerHandler.bind(this);
+        this.questionHandler = this.questionHandler.bind(this);
+        this.answerAHandler = this.answerAHandler.bind(this);
+        this.answerBHandler = this.answerBHandler.bind(this);
+        this.answerCHandler = this.answerCHandler.bind(this);
+        this.answerDHandler = this.answerDHandler.bind(this);
+        this.correctAnswerHandler = this.correctAnswerHandler.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    
+    componentWillMount() {
+        this.setState(() => ({
+            question: this.props.object.question,
+            answerA: this.props.object.answers.answerA,
+            answerB: this.props.object.answers.answerB,
+            answerC: this.props.object.answers.answerC,
+            answerD: this.props.object.answers.answerD,
+            correctAnswer: this.props.object.correctAnswer
+        }))
     }
 
     /*
-    componentWillMount() {
-        //this.setState(() => ({ number: this.props.number }));
-        alert(this.state.submit);
-    }
-
     componentWillReceiveProps() {
         alert("submit at child component");
     }
@@ -61,26 +77,56 @@ class QuestionComponent extends React.Component {
         e.persist();
         this.setState(() => ({ type: e.target.value }));
     }
-    answerHandler(e) {
+    questionHandler(e) {
+        e.persist();
+        this.setState(() => ({ question: e.target.value }));
+    }
+    answerAHandler(e) {
+        e.persist();
+        this.setState(() => ({ answerA: e.target.value }));
+    }
+    answerBHandler(e) {
+        e.persist();
+        this.setState(() => ({ answerB: e.target.value }));
+    }
+    answerCHandler(e) {
+        e.persist();
+        this.setState(() => ({ answerC: e.target.value }));
+    }
+    answerDHandler(e) {
+        e.persist();
+        this.setState(() => ({ answerD: e.target.value }));
+    }
+    correctAnswerHandler(e) {
         e.persist();
         this.setState(() => ({ correctAnswer: e.target.value }));
     }
+    
+    onSubmit(e) {
+        e.preventDefault();
+        
+        this.props.onSubmit(e);
+        //alert(this.state.answerA);
+        // server call which edits and saves question to quiz
+        // push back to viewQuiz....
+    }
+    
     
 
     render() {
         return (
             <div key={this.state.number} className="question_container">
                 <div><label>Question {this.state.number}</label></div>
-                <input name="question" placeholder="question" autoComplete="off"></input>
+                <input name="question" value={this.state.question} placeholder="question" autoComplete="off" onChange={this.questionHandler}></input>
                 <div>
                     <div><label>{this.state.submit}</label></div>
-                    <div><label>a</label><input name="answerA"></input></div>
-                    <div><label>b</label><input name="answerB"></input></div>
-                    <div><label>c</label><input name="answerC"></input></div>
-                    <div><label>d</label><input name="answerD"></input></div>
+                    <div><label>a</label><input name="answerA" value={this.state.answerA} onChange={this.answerAHandler}></input></div>
+                    <div><label>b</label><input name="answerB" value={this.state.answerB} onChange={this.answerBHandler}></input></div>
+                    <div><label>c</label><input name="answerC" value={this.state.answerC} onChange={this.answerCHandler}></input></div>
+                    <div><label>d</label><input name="answerD" value={this.state.answerD} onChange={this.answerDHandler}></input></div>
                     <div>
                         <div><label>Correct Answer</label></div>
-                        <select name="correctAnswer" onChange={this.answerHandler} value={this.state.correctAnswer}>
+                        <select name="correctAnswer" onChange={this.correctAnswerHandler} value={this.state.correctAnswer}>
                             <option value="a">a</option>
                             <option value="b">b</option>
                             <option value="c">c</option>
@@ -88,6 +134,7 @@ class QuestionComponent extends React.Component {
                         </select>
                     </div>
                 </div>
+                <button onClick={this.onSubmit}>Save</button>
             </div>
         )
     }
