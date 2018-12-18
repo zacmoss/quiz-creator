@@ -2,6 +2,7 @@ import React from 'react';
 import '../style.css';
 import axios from 'axios';
 import Header from './Header';
+import ViewQuiz from './ViewQuiz';
 import { Link } from 'react-router-dom';
 
 
@@ -11,7 +12,8 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             userType: null,
-            quizzesArray: []
+            quizzesArray: [],
+            editQuizObject: null
         }
         //this.searchEvents = this.searchEvents.bind(this);
     }
@@ -23,12 +25,15 @@ class Dashboard extends React.Component {
             let type = result.data.type;
             let userId = result.data.userId;
             let array = result.data.array;
-            console.log(array);
+            
             let renderArray = array.map(function(ele) {
                 return (
                     <div key={ele.quizId} onClick={() => self.clickQuiz(ele.quizId)}>{ele.title}</div>
-                );
+                    
+                   //<div key={ele.quizId}><Link props={ele.quizId} to="/viewQuiz">{ele.title}</Link></div>
+                    );
             });
+            
             self.setState(() => ({ userType: type, quizzesArray: renderArray }));
         }).catch(function(err) {
             console.log(err);
@@ -36,7 +41,14 @@ class Dashboard extends React.Component {
     }
 
     clickQuiz(quizId) {
-        alert(quizId);
+        let self = this;
+        let data = { "quizId": quizId };
+        axios.post('/getQuizData', data).then(function(result) {
+            console.log(result.data.quizObject);
+            self.setState(() => ({ editQuizObject: result.data.quizObject }));
+        }).catch(function(err) {
+            console.log(err);
+        });
     }
 
     render() {
@@ -70,6 +82,7 @@ class Dashboard extends React.Component {
                         </div>
                     </div>
                 }
+                {this.state.editQuizObject !== null && <ViewQuiz object={this.state.editQuizObject} test="test" />}
             </div>
         )
 

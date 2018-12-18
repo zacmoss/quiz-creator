@@ -10,6 +10,7 @@ import Dashboard from '../components/Dashboard';
 import StudentDashboard from '../components/StudentDashboard';
 import TeacherDashboard from '../components/TeacherDashboard';
 import CreateQuizPage from '../components/CreateQuizPage';
+import ViewQuiz from '../components/ViewQuiz';
 import createHistory from 'history/createBrowserHistory';
 
 export const history = createHistory();
@@ -42,6 +43,7 @@ class AppRouter extends React.Component { // Client-Side Routing
                         <Route path="/studentDashboard" component={StudentDashboard} />
                         <Route path="/teacherDashboard" component={TeacherDashboard} />
                         <Route path="/createQuizPage" component={CreateQuizPage} />
+                        <Route path="/viewQuiz" component={ViewQuiz} />
                         <Route component={NotFoundPage} />
                     </Switch>
                 </div>

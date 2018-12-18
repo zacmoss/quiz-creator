@@ -144,12 +144,26 @@ app.get('/getUserData', (req, res) => {
     }
     //res.send({ type: type, userId: req.session.userId, user: req.session.user });
 })
-/*
-app.get('/getUserQuizzes', (req, res) => {
-    let userId = req.session.userId;
+app.post('/getQuizData', (req, res) => {
+    let quizId = req.body.quizId;
+    
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.findOne({_id: ObjectId(quizId)}, function(err, result) {
+            if (result) {
+                console.log(result.quizObject.title);
+                res.send({ error: 0, message: "quiz found", quizObject: result.quizObject });
+                //let array = result.quizzes;
+                //res.send({ type: type, userId: req.session.userId, user: req.session.user, array: array });
+            } else {
+                res.send({ error: 1, message: "Couldn't find quiz" });
+            }
+        });
+    });
+    
 
 })
-*/
 
 
 
