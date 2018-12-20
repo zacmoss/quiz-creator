@@ -102,7 +102,8 @@ class CreateQuizPage extends React.Component {
             teacher: null,
             title: "",
             page: 0,
-            lastPage: false
+            lastPage: false,
+            questionPassed: null
         }
         this.nextClick = this.nextClick.bind(this);
         this.backClick = this.backClick.bind(this);
@@ -113,6 +114,8 @@ class CreateQuizPage extends React.Component {
     }
 
     nextClick(e) {
+        e.preventDefault();
+        /*
         e.preventDefault();
         
         let oneQuestion = false;
@@ -154,11 +157,41 @@ class CreateQuizPage extends React.Component {
             }
             this.setState(() => ({ school: school, teacher: teacher, title: title, totalQuestions: totalQuestions, page: page, lastPage: lastPage }));
         }
+        */
+        let school = e.target.elements.school.value;
+        let teacher = e.target.elements.teacher.value;
+        let title = e.target.elements.title.value;
+        let totalQuestions = e.target.elements.numberOfQuestions.value;
+       
+        this.setState(() => ({
+           school: school,
+           teacher: teacher,
+           title: title,
+           totalQuestions: totalQuestions,
+           page: 1
+        }));
+        
+
     }
 
     backClick(e) {
         e.preventDefault();
         let page = this.state.page - 1;
+        // page is now === to question number
+        // remove question
+        let data = {
+            "questionNumber": page
+        }
+        axios.post('/deleteQuestion', data).then(function(response) {
+            if (response.data.error === 0) {
+                alert(response.data.message);
+            } else {
+                alert(response.data.message);
+            }
+        }).catch(function(err) {
+            console.log("error: " + err);
+        });
+        
         // need to do server call for question's info at this page and set as values
         // clear array??? // no so if they click back in browser, q still there???
         //this.setState(() => ({ mode: "intro" }));
@@ -232,6 +265,67 @@ class CreateQuizPage extends React.Component {
                     <div className="form_container">
                         <h2>Create a Quiz</h2>
                          
+                        <div className="form">
+                            <div className="form_inputs_container">
+                                {this.state.page === 0 ?
+                                    <form onSubmit={this.nextClick}>
+                                        <div>
+                                            <input name="school" placeholder="school" autoComplete="off" required></input>
+                                        </div>
+                                        <div>
+                                            <input name="teacher" placeholder="teacher's last name" autoComplete="off" required></input>
+                                        </div>
+                                        <div>
+                                            <input name="title" placeholder="quiz title" autoComplete="off" required></input>
+                                        </div>
+                                        <div>
+                                            <select name="numberOfQuestions">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                        </div>
+                                        <div className="form_button_container">
+                                            <button>Next</button>
+                                        </div>
+                                    </form>
+                                :
+                                    <div>
+                                        {this.state.school}
+                                        {this.state.teacher}
+                                        <div>
+                                            <QuestionComponent
+                                                mode={"create"}
+                                                school={this.state.school}
+                                                teacher={this.state.teacher}
+                                                title={this.state.title}
+                                                number={this.state.page}
+                                                totalQuestions={this.state.totalQuestions}
+                                                quizId={this.state.quizId}
+                                                onSubmit={this.nextClick} />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+
+    /* old
+    render() {
+        return (
+            <div>
+                <Header />
+                <div className="form_page_container">
+                    <div className="form_container">
+                        <h2>Create a Quiz</h2>
+                         
                         <form className="form" onSubmit={this.nextClick}>
                             <div className="form_inputs_container">
                                 {this.state.page === 0 ?
@@ -268,10 +362,10 @@ class CreateQuizPage extends React.Component {
                                                 <input name="question" placeholder="question" autoComplete="off" required></input>
                                                 <div>
                                                     <div><label>Answers</label></div>
-                                                    <div><label>a</label><input name="answerA" required></input></div>
-                                                    <div><label>b</label><input name="answerB" required></input></div>
-                                                    <div><label>c</label><input name="answerC" required></input></div>
-                                                    <div><label>d</label><input name="answerD" required></input></div>
+                                                    <div><label>a</label><input name="answerA" autoComplete="off" required></input></div>
+                                                    <div><label>b</label><input name="answerB" autoComplete="off" required></input></div>
+                                                    <div><label>c</label><input name="answerC" autoComplete="off" required></input></div>
+                                                    <div><label>d</label><input name="answerD" autoComplete="off" required></input></div>
                                                     <div>
                                                         <div><label>Correct Answer</label></div>
                                                         <select name="correctAnswer">
@@ -297,6 +391,7 @@ class CreateQuizPage extends React.Component {
             </div>
         );
     }
+    */
 }
 
 

@@ -9,16 +9,22 @@ class QuestionComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            quizId: this.props.object.quizId,
+            mode: this.props.mode,
+            quizId: this.props.quizId,
+            school: "",
+            teacher: "",
+            title: "",
             number: this.props.number,
-            questionId: this.props.object._id,
+            numberOfQuestions: this.props.totalQuestions,
+            questionId: null,
             question: "",
             type: "multiple",
             answerA: "",
             answerB: "",
             answerC: "",
             answerD: "",
-            correctAnswer: ""
+            correctAnswer: "",
+            lastPage: false
         }
     
         this.typeHandler = this.typeHandler.bind(this);
@@ -28,50 +34,44 @@ class QuestionComponent extends React.Component {
         this.answerCHandler = this.answerCHandler.bind(this);
         this.answerDHandler = this.answerDHandler.bind(this);
         this.correctAnswerHandler = this.correctAnswerHandler.bind(this);
+        this.nextClick = this.nextClick.bind(this);
+        this.backClick = this.backClick.bind(this);
+        this.clearInputs = this.clearInputs.bind(this); 
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     
     componentWillMount() {
-        this.setState(() => ({
-            question: this.props.object.question,
-            answerA: this.props.object.answers.answerA,
-            answerB: this.props.object.answers.answerB,
-            answerC: this.props.object.answers.answerC,
-            answerD: this.props.object.answers.answerD,
-            correctAnswer: this.props.object.correctAnswer
-        }))
-    }
-
-    /*
-    componentWillReceiveProps() {
-        alert("submit at child component");
-    }
-
-    // will this be called on state changes???
-    componentDidMount() {
-        let data = {
-            "number": this.state.number,
-            "question": this.state.question,
-            "type": this.state.type,
-            "answers": this.state.answers,
-            "correctAnswer": this.state.correctAnswer
-        }
-        /*
-        axios.post('/editQuestion', data).then(function(response) {
-            if (response.data.error === 0) {
-                alert(response.data.message);
-            } else {
-                alert(response.data.message);
+        if (this.props.mode === "create") {
+            let lastPage;
+            if (this.state.number == this.state.numberOfQuestions) {
+                lastPage = true;
             }
-        }).catch(function(err) {
-            console.log("error: " + err);
-        });
-        *//*
-        
+            this.setState(() => ({
+                school: this.props.school,
+                teacher: this.props.teacher,
+                title: this.props.title,
+                question: "",
+                answerA: "",
+                answerB: "",
+                answerC: "",
+                answerD: "",
+                correctAnswer: "a",
+                lastPage: lastPage
+            }));
+        } else {
+            this.setState(() => ({
+                quizId: this.props.object.quizId,
+                questionId: this.props.object._id,
+                question: this.props.object.question,
+                answerA: this.props.object.answers.answerA,
+                answerB: this.props.object.answers.answerB,
+                answerC: this.props.object.answers.answerC,
+                answerD: this.props.object.answers.answerD,
+                correctAnswer: this.props.object.correctAnswer
+            }));
+        }
     }
-    */
-
     
     typeHandler(e) {
         e.persist();
@@ -101,35 +101,137 @@ class QuestionComponent extends React.Component {
         e.persist();
         this.setState(() => ({ correctAnswer: e.target.value }));
     }
-    
-    onSubmit(e) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    nextClick(e) {
         e.preventDefault();
-        let self = this;
-        let data = {
-            quizId: this.state.quizId,
-            questionId: this.state.questionId,
-            question: this.state.question,
-            type: this.state.type,
-            answerA: this.state.answerA,
-            answerB: this.state.answerB,
-            answerC: this.state.answerC,
-            answerD: this.state.answerD,
-            correctAnswer: this.state.correctAnswer
+
+        if (this.state.number === this.state.numberOfQuestions) {
+            this.onSubmit(e);
+            this.props.history.push('/dashboard');
+        } else {
+            let number = this.state.number + 1;
+            let lastPage = false;
+            if (number == this.state.numberOfQuestions) { //////////// had to do '==' here instead of '===' not sure why
+                lastPage = true;
+            }
+            this.onSubmit(e);
+            this.setState(() => ({ number: number, lastPage: lastPage }));
         }
-        axios.post('/editQuestion', data).then(function(response) {
+    }
+
+    backClick(e) {
+        e.preventDefault();
+        let number = this.state.number - 1;
+        // page is now === to question number
+        // remove question
+        let data = {
+            "questionNumber": number
+        }
+        axios.post('/deleteQuestion', data).then(function(response) {
             if (response.data.error === 0) {
                 alert(response.data.message);
-                self.props.onSubmit(e);
             } else {
                 alert(response.data.message);
             }
         }).catch(function(err) {
             console.log("error: " + err);
         });
-        //this.props.onSubmit(e);
-        //alert(this.state.answerA);
-        // server call which edits and saves question to quiz
-        // push back to viewQuiz....
+        
+        // need to do server call for question's info at this page and set as values
+        // clear array??? // no so if they click back in browser, q still there???
+        //this.setState(() => ({ mode: "intro" }));
+        this.setState(() => ({ number: number, lastPage: false }))
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    clearInputs(e) {
+        this.setState(() => ({
+            question: "",
+            type: "multiple",
+            answerA: "",
+            answerB: "",
+            answerC: "",
+            answerD: "",
+            correctAnswer: ""
+        }))
+    }
+    
+    onSubmit(e) {
+        e.preventDefault();
+        let self = this;
+        if (this.state.mode === "edit") {
+            let data = {
+                quizId: this.state.quizId,
+                questionId: this.state.questionId,
+                question: this.state.question,
+                type: this.state.type,
+                answerA: this.state.answerA,
+                answerB: this.state.answerB,
+                answerC: this.state.answerC,
+                answerD: this.state.answerD,
+                correctAnswer: this.state.correctAnswer
+            }
+            axios.post('/editQuestion', data).then(function(response) {
+                if (response.data.error === 0) {
+                    alert(response.data.message);
+                    self.props.onSubmit(e);
+                } else {
+                    alert(response.data.message);
+                }
+            }).catch(function(err) {
+                console.log("error: " + err);
+            });
+            
+        } else {
+            // create question
+            let questionObject = {
+                quizId: this.state.quizId,
+                question: this.state.question,
+                type: this.state.type,
+                answerA: this.state.answerA,
+                answerB: this.state.answerB,
+                answerC: this.state.answerC,
+                answerD: this.state.answerD,
+                correctAnswer: this.state.correctAnswer
+            }
+            axios.post('/pushQuestion', questionObject).then(function(response) {
+                if (response.data.error === 0) {
+                    //alert(response.data.message);
+                    self.clearInputs(e);
+                } else {
+                    //alert(response.data.message);
+                }
+            }).catch(function(err) {
+                console.log("error: " + err);
+            });
+            
+        }
     }
     
     
@@ -137,6 +239,7 @@ class QuestionComponent extends React.Component {
     render() {
         return (
             <div key={this.state.number} className="question_container">
+            <form onSubmit={this.state.mode === "create" ? this.nextClick : this.onSubmit}>
                 <div><label>Question {this.state.number}</label></div>
                 <input name="question" value={this.state.question} placeholder="question" autoComplete="off" onChange={this.questionHandler}></input>
                 <div>
@@ -155,7 +258,11 @@ class QuestionComponent extends React.Component {
                         </select>
                     </div>
                 </div>
-                <button onClick={this.onSubmit}>Save</button>
+                
+                {this.state.mode === "create" && <button>{this.state.lastPage ? "Submit Quiz" : "Next"}</button>}
+                {this.state.mode === "edit" && <button>Save</button>}
+            </form>
+                {this.state.mode === "create" && <button onClick={this.goBack}>Back</button>}
             </div>
         )
     }

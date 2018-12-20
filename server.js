@@ -415,11 +415,26 @@ app.post('/createQuiz', (req, res) => {
 app.post('/pushQuestion', (req, res) => {
     //let questionObject = req.body;
     //console.log(req.body);
+    /* old
     let questionObject = {
         "_id": new ObjectId(),
         "quizId": req.body.quizId,
         "question": req.body.question,
         "answers": req.body.answers,
+        "correctAnswer": req.body.correctAnswer
+    }
+    */
+   let answers = {
+        "answerA": req.body.answerA,
+        "answerB": req.body.answerB,
+        "answerC": req.body.answerC,
+        "answerD": req.body.answerD
+    }
+    let questionObject = {
+        "_id": new ObjectId(),
+        "quizId": req.body.quizId,
+        "question": req.body.question,
+        "answers": answers,
         "correctAnswer": req.body.correctAnswer
     }
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
@@ -432,6 +447,10 @@ app.post('/pushQuestion', (req, res) => {
                 res.send({ error: 1, message: "Quiz Doesn't Exist" })            }
         });
     });
+});
+
+app.post('/deleteQuestion', (req, res) => {
+    let questionNumber = res.body.questionNumber;
 
 })
 

@@ -1,5 +1,24 @@
 /*
 
+
+To Do
+
+Add back buttons on createQuiz and viewQuiz
+
+Need to fix error where, when creating a quiz, if they click back on question that's
+not question 1, the prior question was already sent and is not deleted from database.
+So, when we submit quiz there is an extra question.
+
+Handle if case where a quiz creation was started, but not finished. When viewing 
+quiz maybe if there were no questions submitted show text, no questions with 
+a button, add question.
+
+Maybe remove number of questions option, and make it work where as they're 
+creating a quiz, have an add question button and a submit quiz button. Only allow
+a max of 20 questions though...
+
+Add discussion from createQuizPage to this doc.
+
 Need to handle if they type same teacher at same school types in same name of
 an existing quiz we need to send error telling her that that quiz already exists.
 

@@ -52,7 +52,7 @@ class ViewQuiz extends React.Component {
                 numberOfQuestions: result.data.quizObject.numberOfQuestions,
                 questionsRender: questionsRender,
                 mode: "view",
-                questionsPassed: null,
+                questionPassed: null,
                 numberPassed: null
             }));
         }).catch(function(err) {
@@ -70,6 +70,7 @@ class ViewQuiz extends React.Component {
             number ++;
             return (
                 <div key={ele._id}>
+                    <div>Quiz Id : {ele.quizId}</div>
                     <div>{ele._id}</div>
                     <div>Question number {number}</div>
                     <div>{ele.question}</div>
@@ -92,7 +93,7 @@ class ViewQuiz extends React.Component {
             <div>
                 {this.state.mode === "edit" ?
                     <div>
-                        <QuestionComponent number={this.state.numberPassed} object={this.state.questionPassed} onSubmit={this.onSubmit}/>
+                        <QuestionComponent mode={"edit"} quizId={this.state.quizId} number={this.state.numberPassed} object={this.state.questionPassed} onSubmit={this.onSubmit}/>
                     </div>
                 :
                     <div>
