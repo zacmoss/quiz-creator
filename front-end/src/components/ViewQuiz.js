@@ -12,6 +12,7 @@ class ViewQuiz extends React.Component {
         super(props);
         this.state = {
             mode: "view",
+            quizId: null,
             school: null,
             teacher: null,
             title: null,
@@ -20,14 +21,51 @@ class ViewQuiz extends React.Component {
             questionPassed: null,
             numberPassed: null
         }
-    ///this.searchEvents = this.searchEvents.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentWillMount() {
+        let questionsRender = this.renderQuestions(this.props.object.questionsArray);
+        this.setState(() => ({
+            quizId: this.props.object.quizId,
+            school: this.props.object.school,
+            teacher: this.props.object.teacher,
+            title: this.props.object.title,
+            numberOfQuestions: this.props.object.numberOfQuestions,
+            questionsRender: questionsRender
+        }));
+    }
+
+    editQuestion(ele, number) {
+        this.setState(() => ({ mode: "edit", questionPassed: ele, numberPassed: number }));
+    }
+    onSubmit(e) {
+        e.persist();
         let self = this;
-        let array = this.props.object.questionsArray;
+        let data = { "quizId": this.state.quizId };
+        axios.post('/getQuizData', data).then(function(result) {
+            let questionsRender = self.renderQuestions(result.data.quizObject.questionsArray);
+            self.setState(() => ({
+                teacher: result.data.quizObject.teacher,
+                school: result.data.quizObject.school,
+                title: result.data.quizObject.title,
+                numberOfQuestions: result.data.quizObject.numberOfQuestions,
+                questionsRender: questionsRender,
+                mode: "view",
+                questionsPassed: null,
+                numberPassed: null
+            }));
+        }).catch(function(err) {
+            console.log(err);
+        });
+        //this.setState(() => ({ mode: "view", questionPassed: null, numberPassed: null }));
+    }
+
+    
+    renderQuestions(questionsArray) {
+        let self = this;
         let number = 0;
+        let array = questionsArray;
         let questionsRender = array.map(function(ele) {
             number ++;
             return (
@@ -45,26 +83,9 @@ class ViewQuiz extends React.Component {
                     <div onClick={() => self.editQuestion(ele, number)}>Edit Question</div>
                 </div>
             )
-        });
-        this.setState(() => ({
-            school: this.props.object.school,
-            teacher: this.props.object.teacher,
-            title: this.props.object.title,
-            numberOfQuestions: this.props.object.numberOfQuestions,
-            questionsRender: questionsRender
-        }))
+        })
+        return questionsRender;
     }
-
-    editQuestion(ele, number) {
-        this.setState(() => ({ mode: "edit", questionPassed: ele, numberPassed: number }));
-    }
-    onSubmit(e) {
-        e.preventDefault();
-        alert('test');
-        this.setState(() => ({ mode: "view", questionPassed: null, numberPassed: null }));
-    }
-
-    
 
     render() {
         return (

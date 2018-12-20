@@ -11,7 +11,7 @@ class QuestionComponent extends React.Component {
         this.state = {
             quizId: this.props.object.quizId,
             number: this.props.number,
-            _id: this.props.object._id,
+            questionId: this.props.object._id,
             question: "",
             type: "multiple",
             answerA: "",
@@ -104,8 +104,29 @@ class QuestionComponent extends React.Component {
     
     onSubmit(e) {
         e.preventDefault();
-        
-        this.props.onSubmit(e);
+        let self = this;
+        let data = {
+            quizId: this.state.quizId,
+            questionId: this.state.questionId,
+            question: this.state.question,
+            type: this.state.type,
+            answerA: this.state.answerA,
+            answerB: this.state.answerB,
+            answerC: this.state.answerC,
+            answerD: this.state.answerD,
+            correctAnswer: this.state.correctAnswer
+        }
+        axios.post('/editQuestion', data).then(function(response) {
+            if (response.data.error === 0) {
+                alert(response.data.message);
+                self.props.onSubmit(e);
+            } else {
+                alert(response.data.message);
+            }
+        }).catch(function(err) {
+            console.log("error: " + err);
+        });
+        //this.props.onSubmit(e);
         //alert(this.state.answerA);
         // server call which edits and saves question to quiz
         // push back to viewQuiz....

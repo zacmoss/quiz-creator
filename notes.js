@@ -94,6 +94,18 @@ variables and conditionally renders a QuestionComponent. It's passed the onSubmi
 function from ViewQuiz so that when we click "Save" we hit the server with question
 changes and then changes state "mode" in the HOC to alter view back to ViewQuiz.
 
+When editing a quiz. We server-call 'getQuizData' on clicking a quiz which can then
+render the quiz and questions for 'view' mode and then when we edit a question and
+click 'edit' we call server-call 'getQuizData' again through that onSubmit function.
+
+When editing a question. We are rendering the question through props passed from the 
+parent component which is ViewQuiz. Then, on clicking 'edit' we server-call 'editQuestion'
+which finds and updates the entire quiz in the database. B/c we can't update docs
+two levels deep in mongodb, we have to update the whole quiz by copying the quiz
+then mapped through the questionsArray to find the edited question and then we
+change that one question and save to the new questionsArray dnd new Quiz. That
+new quiz is then saved in db.
+
 
 
 

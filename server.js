@@ -167,6 +167,7 @@ app.post('/getQuizData', (req, res) => {
             if (result) {
                 console.log(result.title);
                 let quizObject = {
+                    "quizId": result._id,
                     "title": result.title,
                     "school": result.school,
                     "teacher": result.teacher,
@@ -308,23 +309,69 @@ app.post('/logout', (req, res) => {
 
 app.post('/editQuestion', (req, res) => {
 
-    let number = req.body.number;
+    //let number = req.body.number;
+    
+    let quizId = req.body.quizId;
+    let questionId = req.body.questionId;
     let question = req.body.question;
     let type = req.body.type;
-    let answers = req.body.answers;
+    let answers = {
+        "answerA": req.body.answerA,
+        "answerB": req.body.answerB,
+        "answerC": req.body.answerC,
+        "answerD": req.body.answerD
+    }
     let correctAnswer = req.body.correctAnswer; // should be a number
 
-    let questionObject = {
-        "number": number,
-        "question": question,
-        "type": type,
-        "answers": answers,
-        "correctAnswer": correctAnswer
-    }
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.findOne({_id: ObjectId(quizId)}, function(err, result) {
+            
+            //// save quiz to variable
+            // map through questions array to find question with _id === questionId
+            // make that question = to new question object
+            // save the mapped array as newQuestionArray
+            // save questionsArray as newQuestionArray
+            // createAndUpdate quiz questionsArray: newQuestionArray
+            // Have to do this b/c like with anonymous thread project, we can't edit directly two levels deep in mongodb
+            let oldQuestionsArray = result.questionsArray;
+            let newQuestionsArray = oldQuestionsArray.map(function(ele) {
+                // may need to ObjectId(questionid)
+                
+                if (ele._id == questionId) {
+                    let newQuestion = {
+                        "_id": ObjectId(questionId),
+                        "quizId": quizId,
+                        "question": question,
+                        "answers": answers,
+                        "correctAnswer": correctAnswer
+                    }
+                    return newQuestion;
+                } else {
+                    return ele;
+                }
+            });
+            
+            collection.findOneAndUpdate({_id: ObjectId(quizId)}, { $set: {questionsArray: newQuestionsArray} }, function(err, doc) {
+                if (doc) {
+                    res.send({ error: 0, message: "Question Added"});
+                } else {
+                    res.send({ error: 1, message: err });
+                }
+            });
+        });
+        /*
+        collection.findOneAndUpdate({_id: ObjectId(quizId)}, { $push: { questionsArray: questionObject } }, function(err, result) {
+            if (result) {
+                res.send({ error: 0, message: "Question Added"});
+            } else {
+                res.send({ error: 1, message: "Quiz Doesn't Exist" })
+        });
+        */
+    });
 
-    quizObject.questionsArray.push(questionObject);
-
-    res.json({error: 0, message: "Question edited"});
+    //res.json({error: 0, message: "Question edited"});
 })
 
 

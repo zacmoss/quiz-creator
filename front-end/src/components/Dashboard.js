@@ -55,7 +55,7 @@ class Dashboard extends React.Component {
                 {this.state.editQuizObject !== null ? 
                     <div>
                         <Header />
-                        <ViewQuiz object={this.state.editQuizObject} test="test" />
+                        <ViewQuiz object={this.state.editQuizObject} />
                     </div>
                 :
                     <div>
