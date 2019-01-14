@@ -26,7 +26,7 @@ class Dashboard extends React.Component {
             let array = result.data.array;
             let renderArray = array.map(function(ele) {
                 return (
-                    <div key={ele._id} onClick={() => self.clickQuiz(ele._id)}>{ele.title}</div>
+                    <div key={ele._id} onClick={() => self.newClick(ele._id)}>{ele.title}</div>
                    //<div key={ele.quizId}><Link props={ele.quizId} to="/viewQuiz">{ele.title}</Link></div>
                     );
             });
@@ -47,6 +47,9 @@ class Dashboard extends React.Component {
             console.log(err);
         });
     }
+    newClick(quizId) {
+        this.props.history.push('/viewQuizNew?quizId=' + quizId);
+    }
 
 
     render() {
@@ -61,7 +64,7 @@ class Dashboard extends React.Component {
                     <div>
                         <Header />
                         <div className="teacher_dashboard">
-                            <Link className="td_link" to="/createQuizPage"><p className="td_button">Create Quiz</p></Link>
+                            <Link className="td_link" to="/createQuizNew"><p className="td_button">Create Quiz</p></Link>
                             <div>
                                 <h2>My Quizes</h2>
                                 <div>

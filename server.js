@@ -454,8 +454,91 @@ app.post('/deleteQuestion', (req, res) => {
 
 })
 
+
+
+
+
+
+
+// new requests
+
 app.post('/submitQuiz', (req, res) => {
     // insert quizObject into mongodb
+
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        
+        // create new questionsArray that gives each question a ObjectId
+        let questionsArray = req.body.questionsArray;
+        let newQuestionsArray = questionsArray.map(function(ele) {
+            ele._id = new ObjectId;
+            return ele;
+        });
+        collection.insertOne({
+            "createdBy": req.session.userId,
+            "school": req.body.school,
+            "teacher": req.body.teacher,
+            "title": req.body.title,
+            "numberOfQuestions": req.body.numberOfQuestions,
+            "questionsArray": newQuestionsArray
+            }, function(err, doc) {
+                let quizId = doc.insertedId;
+                res.json({error: 0, message: "quiz created", quizId: quizId });
+            
+        });
+    });
+})
+
+/*
+app.get('/getQuestion', (req, res) => {
+    let quizId = req.body.quizId;
+    let questionId = req.body.questionId;
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.findOne({_id: quizId})
+
+    });
+})
+*/
+
+app.post('/editQuestionNew', (req, res) => {
+    // find one then find one and update
+    // find quiz
+    // would need to clone questionsArray
+    // create a newQuestionArray with changed spot
+    // save to questionsArray
+    let quizId = req.body.quizId;
+    let questionId = req.body.questionId;
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true }, function(err, db) {
+        let dbo = db.db("quiz-creator");
+        let collection = dbo.collection('quizzes');
+        collection.findOne({_id: ObjectId(quizId)}, function(err, result) {
+            // loop through questionsArray if _id === questionId then change
+            
+            let newQuestionsArray = result.questionsArray.map(function(ele) {
+                console.log(ele._id);
+                console.log(questionId);
+                if (ele._id == questionId) {
+                    console.log('found question');
+                    ele.question = req.body.question;
+                    ele.type = req.body.type;
+                    ele.answerA = req.body.answerA;
+                    ele.answerB = req.body.answerB;
+                    ele.answerC = req.body.answerC;
+                    ele.answerD = req.body.answerD;
+                    ele.correctAnswer = req.body.correctAnswer;
+                }
+                return ele;
+            })
+            collection.findOneAndUpdate({_id: ObjectId(quizId)}, {$set: {questionsArray: newQuestionsArray}}, function(err, doc) {
+                res.json({error: 0, message: "question edited"});
+            })
+            
+        });
+
+    });
 })
 
 

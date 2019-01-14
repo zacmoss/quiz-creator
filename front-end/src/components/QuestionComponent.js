@@ -64,10 +64,10 @@ class QuestionComponent extends React.Component {
                 quizId: this.props.object.quizId,
                 questionId: this.props.object._id,
                 question: this.props.object.question,
-                answerA: this.props.object.answers.answerA,
-                answerB: this.props.object.answers.answerB,
-                answerC: this.props.object.answers.answerC,
-                answerD: this.props.object.answers.answerD,
+                answerA: this.props.object.answerA,
+                answerB: this.props.object.answerB,
+                answerC: this.props.object.answerC,
+                answerD: this.props.object.answerD,
                 correctAnswer: this.props.object.correctAnswer
             }));
         }
@@ -259,10 +259,10 @@ class QuestionComponent extends React.Component {
                     </div>
                 </div>
                 
-                {this.state.mode === "create" && <button>{this.state.lastPage ? "Submit Quiz" : "Next"}</button>}
-                {this.state.mode === "edit" && <button>Save</button>}
+                {this.state.mode === "create" && <button className="form_button_container">{this.state.lastPage ? "Submit Quiz" : "Next"}</button>}
+                {this.state.mode === "edit" && <button className="form_button_container">Save</button>}
             </form>
-                {this.state.mode === "create" && <button onClick={this.goBack}>Back</button>}
+                {this.state.mode === "create" && <button className="form_button_container" onClick={this.goBack}>Back</button>}
             </div>
         )
     }

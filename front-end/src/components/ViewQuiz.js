@@ -69,7 +69,24 @@ class ViewQuiz extends React.Component {
         let questionsRender = array.map(function(ele) {
             number ++;
             return (
-                <div key={ele._id}>
+                <div key={ele._id} className="question_container">
+                    
+                    <div>{ele._id}</div>
+                    <div>Question number {number}</div>
+                    <div>{ele.question}</div>
+                    <div>
+                        <div>a {ele.answerA}</div>
+                        <div>b {ele.answerB}</div>
+                        <div>c {ele.answerC}</div>
+                        <div>d {ele.answerD}</div>
+                    </div>
+                    <div>{ele.correctAnswer}</div>
+                    <div className="form_button_container"><button onClick={() => self.editQuestion(ele, number)}>Edit Question</button></div>
+                </div>
+            )
+            /* old render
+            return (
+                <div key={ele._id} className="question_container">
                     <div>Quiz Id : {ele.quizId}</div>
                     <div>{ele._id}</div>
                     <div>Question number {number}</div>
@@ -81,30 +98,43 @@ class ViewQuiz extends React.Component {
                         <div>d {ele.answers.answerD}</div>
                     </div>
                     <div>{ele.correctAnswer}</div>
-                    <div onClick={() => self.editQuestion(ele, number)}>Edit Question</div>
+                    <div className="form_button_container"><button onClick={() => self.editQuestion(ele, number)}>Edit Question</button></div>
                 </div>
             )
+            */
         })
         return questionsRender;
     }
 
     render() {
         return (
-            <div>
-                {this.state.mode === "edit" ?
-                    <div>
-                        <QuestionComponent mode={"edit"} quizId={this.state.quizId} number={this.state.numberPassed} object={this.state.questionPassed} onSubmit={this.onSubmit}/>
-                    </div>
-                :
-                    <div>
-                        {this.state.title !== null && this.state.title}
-                        {this.state.teacher !== null && this.state.teacher}
-                        {this.state.school !== null && this.state.school}
-                        {this.state.numberOfQuestions !== null && this.state.numberOfQuestions}
-                        {console.log(this.state.questionsArray)}
-                        {this.state.questionsRender}
-                    </div>
-                }
+            <div className="form_page_container">
+                <div className="form_container">
+                    {this.state.title}
+                    {this.state.mode === "edit" ?
+                        <div className="form">
+                            <div className="form_inputs_container">
+                                <div>
+                                    <QuestionComponent mode={"edit"} quizId={this.state.quizId} number={this.state.numberPassed} object={this.state.questionPassed} onSubmit={this.onSubmit}/>
+                                </div>
+                            </div>
+                        </div>
+                    :
+                        <div className="form">
+                            <div className="form_inputs_container">
+                                <div>
+                                    {this.state.title !== null && this.state.title}
+                                    {this.state.teacher !== null && this.state.teacher}
+                                    {this.state.school !== null && this.state.school}
+                                    {this.state.numberOfQuestions !== null && this.state.numberOfQuestions}
+                                    {console.log(this.state.questionsArray)}
+                                    {this.state.questionsRender}
+                                </div>
+                            </div>
+                        </div>
+                    
+                    }
+                </div>
             </div>
         )
 

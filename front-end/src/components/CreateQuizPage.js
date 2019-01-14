@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../style.css';
 import Header from './Header';
 import QuestionComponent from './QuestionComponent';
-import { runInThisContext } from 'vm';
+//import { runInThisContext } from 'vm';
 //import { Link } from 'react-router-dom';
 
 // max out at 20 questions for now
